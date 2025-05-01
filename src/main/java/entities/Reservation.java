@@ -68,10 +68,22 @@ public class Reservation {
         this.heureFinReservation = heureFinReservation;
     }
 
+    // Safe getter for Client - returns only basic client info to prevent circular references
     public Client getClient() {
-        return client;
+        if (client == null) return null;
+        // Return a detached copy with only basic fields to break circular reference
+        Client clientInfo = new Client();
+        clientInfo.setIdClient(client.getIdClient());
+        clientInfo.setFNameClient(client.getFNameClient());
+        clientInfo.setLNameClient(client.getLNameClient());
+        clientInfo.setPhoneClient(client.getPhoneClient());
+        clientInfo.setEmailClient(client.getEmailClient());
+        clientInfo.setLocalisationClient(client.getLocalisationClient());
+        // Important: do not include any collections or back-references
+        return clientInfo;
     }
 
+    // Method to set the client but keep ID in sync
     public void setClient(Client client) {
         this.client = client;
         if (client != null) {
@@ -79,15 +91,36 @@ public class Reservation {
         }
     }
 
+    // Safe getter for Table - returns only basic table info to prevent circular references
     public MyTable getTable() {
-        return table;
+        if (table == null) return null;
+        // Return a detached copy with only basic fields to break circular reference
+        MyTable tableInfo = new MyTable();
+        tableInfo.setIdTab(table.getIdTab());
+        tableInfo.setNbrPlace(table.getNbrPlace());
+        tableInfo.setLocalisationTable(table.getLocalisationTable());
+        // Important: do not include any collections or back-references
+        return tableInfo;
     }
 
+    // Method to set the table but keep ID in sync
     public void setTable(MyTable table) {
         this.table = table;
         if (table != null) {
             this.idTab = table.getIdTab();
         }
+    }
+
+    // This method is kept for internal model use only (database operations)
+    // It should not be used in JSP views to prevent circular references
+    public Client getFullClient() {
+        return this.client;
+    }
+
+    // This method is kept for internal model use only (database operations)
+    // It should not be used in JSP views to prevent circular references
+    public MyTable getFullTable() {
+        return this.table;
     }
 
     @Override

@@ -69,10 +69,32 @@ public class ClientServlet extends HttpServlet {
     }
 
     private void listClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Client> clientList = clientModel.getAllClients();
-        request.setAttribute("clientList", clientList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/clients/list.jsp");
-        dispatcher.forward(request, response);
+        // Check if we're in a recursive loop
+        if (request.getAttribute("clientListProcessed") != null) {
+            System.out.println("Preventing duplicate client list processing");
+            return;
+        }
+
+        // Mark this request as being processed
+        request.setAttribute("clientListProcessed", Boolean.TRUE);
+
+        try {
+            // Continue with normal processing
+            List<Client> clientList = clientModel.getAllClients();
+            System.out.println("Client list size: " + clientList.size());
+            request.setAttribute("clientList", clientList);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/clients/clientList.jsp");
+            dispatcher.forward(request, response);
+        } catch (Exception e) {
+            // Log the error and show an error page
+            System.err.println("Error retrieving client list: " + e.getMessage());
+            e.printStackTrace();
+
+            // Set error attributes
+            request.setAttribute("errorMessage", "Database error. Please try again later.");
+            RequestDispatcher errorDispatcher = request.getRequestDispatcher("/error.jsp");
+            errorDispatcher.forward(request, response);
+        }
     }
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

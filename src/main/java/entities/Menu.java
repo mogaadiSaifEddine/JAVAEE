@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Menu {
     private int idMenu;
@@ -27,8 +28,21 @@ public class Menu {
         this.idMenu = idMenu;
     }
 
+    // Safe getter for Plats - returns only basic plat info to prevent circular references
     public List<Plat> getPlats() {
-        return plats;
+        if (plats == null) return new ArrayList<>();
+
+        // Return a list of detached copies with only basic fields to break circular reference
+        return plats.stream().map(plat -> {
+            Plat platInfo = new Plat();
+            platInfo.setIdPlat(plat.getIdPlat());
+            platInfo.setNamePlat(plat.getNamePlat());
+            platInfo.setPrixPlat(plat.getPrixPlat());
+            platInfo.setDiscPlat(plat.getDiscPlat());
+            platInfo.setAvisPlat(plat.getAvisPlat());
+            // Important: do not include any collections or back-references
+            return platInfo;
+        }).collect(Collectors.toList());
     }
 
     public void setPlats(List<Plat> plats) {
@@ -39,6 +53,12 @@ public class Menu {
     public void addPlat(Plat plat, int quantity) {
         this.plats.add(plat);
         // In a real application, you would also store the quantity in the PlatMenu junction table
+    }
+
+    // This method is kept for internal model use only (database operations)
+    // It should not be used in JSP views to prevent circular references
+    public List<Plat> getFullPlats() {
+        return this.plats;
     }
 
     @Override

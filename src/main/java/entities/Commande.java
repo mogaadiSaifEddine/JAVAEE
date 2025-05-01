@@ -50,15 +50,33 @@ public class Commande {
         this.dateCmd = dateCmd;
     }
 
+    // Safe getter for Client - returns only basic client info to prevent circular references
     public Client getClient() {
-        return client;
+        if (client == null) return null;
+        // Return a detached copy with only basic fields to break circular reference
+        Client clientInfo = new Client();
+        clientInfo.setIdClient(client.getIdClient());
+        clientInfo.setFNameClient(client.getFNameClient());
+        clientInfo.setLNameClient(client.getLNameClient());
+        clientInfo.setPhoneClient(client.getPhoneClient());
+        clientInfo.setEmailClient(client.getEmailClient());
+        clientInfo.setLocalisationClient(client.getLocalisationClient());
+        // Important: do not include any collections or back-references
+        return clientInfo;
     }
 
+    // Method to set the client but keep ID in sync
     public void setClient(Client client) {
         this.client = client;
         if (client != null) {
             this.idClient = client.getIdClient();
         }
+    }
+
+    // This method is kept for internal model use only (database operations)
+    // It should not be used in JSP views to prevent circular references
+    public Client getFullClient() {
+        return this.client;
     }
 
     @Override

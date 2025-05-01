@@ -1,7 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%> <%@ taglib uri="http://jakarta.apache.org/tags/core"
-prefix="c" %> <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -17,6 +13,14 @@ prefix="c" %> <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
     />
   </head>
   <body>
+    <div style="background-color: yellow; padding: 10px; margin: 10px">
+      <p>JSP Test: This text should be visible</p>
+      <p>Client list size: ${clientList.size()}</p>
+      <p>
+        Test object: ${not empty clientList ? 'Client list has elements' :
+        'Client list is empty'}
+      </p>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="${pageContext.request.contextPath}/"
         >Restaurant Management</a
