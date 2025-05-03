@@ -44,6 +44,21 @@
         <servlet-name>ReservationServlet</servlet-name>
         <url-pattern>/reservations/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>TableServlet</servlet-name>
+        <servlet-class>controllers.TableServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TableServlet</servlet-name>
+        <url-pattern>/tables/*</url-pattern>
+    </servlet-mapping><servlet>
+    <servlet-name>PlatServlet</servlet-name>
+    <servlet-class>controllers.PlatServlet</servlet-class>
+</servlet>
+    <servlet-mapping>
+        <servlet-name>PlatServlet</servlet-name>
+        <url-pattern>/plats/*</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

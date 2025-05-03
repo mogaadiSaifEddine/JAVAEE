@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/plats/*")
 public class PlatServlet extends HttpServlet {
 
     private PlatModel platModel;
@@ -50,6 +49,7 @@ public class PlatServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("PlatServlet doPost");
         String action = request.getPathInfo();
         if (action == null) {
             action = "/list";
@@ -69,14 +69,19 @@ public class PlatServlet extends HttpServlet {
     }
 
     private void listPlats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getAttribute("platListProcessed") != null) {
+            return;
+        }
+        System.out.println("Retrieving plat list");
         List<Plat> platList = platModel.getAllPlats();
         request.setAttribute("platList", platList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/plats/list.jsp");
+        request.setAttribute("platListProcessed", Boolean.TRUE);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/paltList.jsp");
         dispatcher.forward(request, response);
     }
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/plats/add.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/addPlat.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -128,7 +133,7 @@ public class PlatServlet extends HttpServlet {
         Plat plat = new Plat(id, price, description, name, avis);
         platModel.updatePlat(plat);
 
-        response.sendRedirect(request.getContextPath() + "/plats/list");
+        response.sendRedirect(request.getContextPath() + "/paltList.jsp");
     }
 
     private void deletePlat(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

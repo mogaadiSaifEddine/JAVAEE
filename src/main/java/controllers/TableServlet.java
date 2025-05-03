@@ -14,7 +14,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-@WebServlet("/tables/*")
 public class TableServlet extends HttpServlet {
 
     private TableModel tableModel;
@@ -79,12 +78,12 @@ public class TableServlet extends HttpServlet {
     private void listTables(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<MyTable> tableList = tableModel.getAllTables();
         request.setAttribute("tableList", tableList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/tables/list.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/tableList.jsp");
         dispatcher.forward(request, response);
     }
 
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/tables/add.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/addTable.jsp");
         dispatcher.forward(request, response);
     }
 
