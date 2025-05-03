@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+pageEncoding="UTF-8"%> <%@ taglib uri="jakarta.tags.core" prefix="c" %> <%@
+taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -21,7 +20,6 @@ pageEncoding="UTF-8"%>
     />
   </head>
   <body>
-   
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="${pageContext.request.contextPath}/"
         >Restaurant Management</a
@@ -100,14 +98,6 @@ pageEncoding="UTF-8"%>
               </h4>
             </div>
             <div class="card-body">
-              <div style="background-color: lightblue; padding: 10px;">
-                <h3>First client details:</h3>
-                <c:if test="${not empty clientList}">
-                  Client #1 ID: ${clientList[0].idClient}<br>
-                  Client #1 First Name: ${clientList[0].FNameClient}<br>
-                  Client #1 toString: ${clientList[0]}<br>
-                </c:if>
-              </div>
               <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -121,39 +111,45 @@ pageEncoding="UTF-8"%>
                   </tr>
                 </thead>
                 <tbody>
-                  <%
-                    java.util.List clientList = (java.util.List)request.getAttribute("clientList");
-                    if (clientList != null && !clientList.isEmpty()) {
-                      for (int i = 0; i < clientList.size(); i++) {
-                        Object clientObj = clientList.get(i);
-                        if (clientObj != null) {
-                          entities.Client client = (entities.Client)clientObj;
-                  %>
-                    <tr>
-                      <td><%= client.getIdClient() %></td>
-                      <td><%= client.getFNameClient() %></td>
-                      <td><%= client.getLNameClient() %></td>
-                      <td><%= client.getPhoneClient() %></td>
-                      <td><%= client.getEmailClient() %></td>
-                      <td><%= client.getLocalisationClient() %></td>
-                      <td>
-                        <a href="${pageContext.request.contextPath}/clients/delete?id=<%= client.getIdClient() %>" class="btn btn-danger btn-sm"
-                          onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
-                        <a href="${pageContext.request.contextPath}/reservations/client?clientId=<%= client.getIdClient() %>" class="btn btn-success btn-sm">Reservations</a>
-                        <a href="${pageContext.request.contextPath}/commandes/client?clientId=<%= client.getIdClient() %>" class="btn btn-warning btn-sm">Orders</a>
-                      </td>
-                    </tr>
-                  <%
-                        }
-                      }
-                    } else {
-                  %>
-                    <tr>
-                      <td colspan="7" class="text-center">No clients found. Please add a client.</td>
-                    </tr>
-                  <%
-                    }
-                  %>
+                  <% java.util.List clientList =
+                  (java.util.List)request.getAttribute("clientList"); if
+                  (clientList != null && !clientList.isEmpty()) { for (int i =
+                  0; i < clientList.size(); i++) { Object clientObj =
+                  clientList.get(i); if (clientObj != null) { entities.Client
+                  client = (entities.Client)clientObj; %>
+                  <tr>
+                    <td><%= client.getIdClient() %></td>
+                    <td><%= client.getFNameClient() %></td>
+                    <td><%= client.getLNameClient() %></td>
+                    <td><%= client.getPhoneClient() %></td>
+                    <td><%= client.getEmailClient() %></td>
+                    <td><%= client.getLocalisationClient() %></td>
+                    <td>
+                      <a
+                        href="${pageContext.request.contextPath}/clients/delete?id=<%= client.getIdClient() %>"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Are you sure you want to delete this client?')"
+                        >Delete</a
+                      >
+                      <a
+                        href="${pageContext.request.contextPath}/reservations/client?clientId=<%= client.getIdClient() %>"
+                        class="btn btn-success btn-sm"
+                        >Reservations</a
+                      >
+                      <a
+                        href="${pageContext.request.contextPath}/commandes/client?clientId=<%= client.getIdClient() %>"
+                        class="btn btn-warning btn-sm"
+                        >Orders</a
+                      >
+                    </td>
+                  </tr>
+                  <% } } } else { %>
+                  <tr>
+                    <td colspan="7" class="text-center">
+                      No clients found. Please add a client.
+                    </td>
+                  </tr>
+                  <% } %>
                 </tbody>
               </table>
             </div>
