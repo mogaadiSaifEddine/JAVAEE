@@ -80,7 +80,7 @@ public class MenuModel {
 
     // Get all menus
     public List<Menu> getAllMenus() {
-        String sql = "SELECT * FROM menu";
+        String sql = "SELECT  id_menu, name_menu FROM menu";
         List<Menu> menuList = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -94,6 +94,7 @@ public class MenuModel {
             while (rs.next()) {
                 Menu menu = new Menu();
                 menu.setIdMenu(rs.getInt("id_menu"));
+                menu.setNameMenu(rs.getString("name_menu"));
 
                 // Get plats for this menu
                 PlatMenuModel platMenuModel = new PlatMenuModel();

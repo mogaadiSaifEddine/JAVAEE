@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 public class Menu {
     private int idMenu;
+    private String nameMenu ;
 
     public String getNameMenu() {
         return nameMenu;
@@ -15,7 +16,6 @@ public class Menu {
         this.nameMenu = nameMenu;
     }
 
-    private String nameMenu;
     private List<Plat> plats;
 
     // Default constructor

@@ -2,8 +2,11 @@ package controllers;
 
 import entities.Client;
 import entities.Commande;
+import entities.Menu;
+import entities.Plat;
 import models.ClientModel;
 import models.CommandeModel;
+import models.MenuModel;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -11,19 +14,23 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.PlatModel;
+
 import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-@WebServlet("/commandes/*")
 public class CommandeServlet extends HttpServlet {
 
     private CommandeModel commandeModel;
     private ClientModel clientModel;
-
+    private MenuModel menuModel;
+    private PlatModel platModel;
     public void init() {
         commandeModel = new CommandeModel();
         clientModel = new ClientModel();
+        menuModel = new MenuModel();
+        platModel = new PlatModel();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -79,7 +86,7 @@ public class CommandeServlet extends HttpServlet {
     private void listCommandes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Commande> commandeList = commandeModel.getAllCommandes();
         request.setAttribute("commandeList", commandeList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/commandes/list.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/commandesList.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -97,15 +104,19 @@ public class CommandeServlet extends HttpServlet {
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Get all clients for dropdown
         List<Client> clientList = clientModel.getAllClients();
+        List<Menu> menuList = menuModel.getAllMenus();
+        List<Plat> platList = platModel.getAllPlats();
         request.setAttribute("clientList", clientList);
-
+        request.setAttribute("menuList", menuList);
+        request.setAttribute("platList", platList);
+        System.out.println(menuList);
         // Pre-select client if coming from client page
         String clientId = request.getParameter("clientId");
         if (clientId != null && !clientId.isEmpty()) {
             request.setAttribute("selectedClientId", Integer.parseInt(clientId));
         }
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/commandes/add.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/addCommande.jsp");
         dispatcher.forward(request, response);
     }
 
