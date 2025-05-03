@@ -110,7 +110,7 @@ public class CommandeServlet extends HttpServlet {
         request.setAttribute("menuList", menuList);
         request.setAttribute("platList", platList);
         System.out.println(menuList);
-        // Pre-select client if coming from client page
+        // Pre-select client if coming from client pagepla
         String clientId = request.getParameter("clientId");
         if (clientId != null && !clientId.isEmpty()) {
             request.setAttribute("selectedClientId", Integer.parseInt(clientId));

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%> <%@ taglib uri="http://jakarta.apache.org/tags/core"
-prefix="c" %> <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+pageEncoding="UTF-8"%> <%@ taglib uri="jakarta.tags.core" prefix="c" %> <%@
+taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -211,61 +211,6 @@ prefix="c" %> <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
       </div>
 
       <!-- Calendar View -->
-      <div class="row mt-4">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header">
-              <h4>Reservation Calendar</h4>
-            </div>
-            <div class="card-body">
-              <div class="calendar-controls text-center mb-3">
-                <div class="btn-group">
-                  <button id="prevWeek" class="btn btn-outline-secondary">
-                    <i class="fas fa-chevron-left"></i> Previous
-                  </button>
-                  <button id="todayBtn" class="btn btn-outline-primary">
-                    Today
-                  </button>
-                  <button id="nextWeek" class="btn btn-outline-secondary">
-                    Next <i class="fas fa-chevron-right"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="calendar-header">
-                <div class="row">
-                  <div class="col-md text-center font-weight-bold">Monday</div>
-                  <div class="col-md text-center font-weight-bold">Tuesday</div>
-                  <div class="col-md text-center font-weight-bold">
-                    Wednesday
-                  </div>
-                  <div class="col-md text-center font-weight-bold">
-                    Thursday
-                  </div>
-                  <div class="col-md text-center font-weight-bold">Friday</div>
-                  <div class="col-md text-center font-weight-bold">
-                    Saturday
-                  </div>
-                  <div class="col-md text-center font-weight-bold">Sunday</div>
-                </div>
-              </div>
-
-              <div class="calendar-body">
-                <div class="row">
-                  <c:forEach begin="1" end="7" varStatus="day">
-                    <div class="col-md calendar-day p-2">
-                      <div class="date-display small text-muted">Date</div>
-                      <div class="reservations-container">
-                        <!-- Reservations will be populated by JavaScript -->
-                      </div>
-                    </div>
-                  </c:forEach>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <footer class="py-5 bg-dark mt-5">

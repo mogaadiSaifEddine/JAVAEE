@@ -18,7 +18,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-@WebServlet("/reservations/*")
 public class ReservationServlet extends HttpServlet {
 
     private ReservationModel reservationModel;
@@ -84,7 +83,7 @@ public class ReservationServlet extends HttpServlet {
     private void listReservations(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Reservation> reservationList = reservationModel.getAllReservations();
         request.setAttribute("reservationList", reservationList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/reservations/list.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/reservationsList.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -113,7 +112,7 @@ public class ReservationServlet extends HttpServlet {
             request.setAttribute("selectedClientId", Integer.parseInt(clientId));
         }
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/reservations/add.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/addREservation.jsp");
         dispatcher.forward(request, response);
     }
 
