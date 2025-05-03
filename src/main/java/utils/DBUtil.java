@@ -3,6 +3,7 @@ package utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,26 +60,38 @@ public class DBUtil {
      * @return A database connection
      * @throws SQLException if a database access error occurs
      */
-    private static Connection getDirectConnection() throws SQLException {
-        try {
-            Properties connectionProps = new Properties();
-            connectionProps.put("user", JDBC_USER);
-            //connectionProps.put("password", JDBC_PASSWORD);
+  private static Connection getDirectConnection() throws SQLException {
+    try {
+        Properties connectionProps = new Properties();
+        connectionProps.put("user", JDBC_USER);
 
-            // Additional connection properties for better performance and security
-            connectionProps.put("useSSL", "false");
-            connectionProps.put("serverTimezone", "UTC");
-            connectionProps.put("allowPublicKeyRetrieval", "true");
-            connectionProps.put("useUnicode", "true");
-            connectionProps.put("characterEncoding", "UTF-8");
+        // Additional properties
+        connectionProps.put("useSSL", "false");
+        connectionProps.put("serverTimezone", "UTC");
+        connectionProps.put("allowPublicKeyRetrieval", "true");
+        connectionProps.put("useUnicode", "true");
+        connectionProps.put("characterEncoding", "UTF-8");
+        
+        // Add these lines to increase lock wait timeout
+        connectionProps.put("innodb_lock_wait_timeout", "120");
+        connectionProps.put("lock_wait_timeout", "120");
 
-            LOGGER.fine("Attempting to connect to database directly at: " + JDBC_URL);
-            return DriverManager.getConnection(JDBC_URL, connectionProps);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error connecting to database", e);
-            throw e;
+        LOGGER.fine("Attempting to connect to database directly at: " + JDBC_URL);
+        
+        Connection conn = DriverManager.getConnection(JDBC_URL, connectionProps);
+        
+        // Set session variables for this connection
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("SET innodb_lock_wait_timeout=120");
+            stmt.execute("SET lock_wait_timeout=120");
         }
+        
+        return conn;
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error connecting to database", e);
+        throw e;
     }
+}
 
     /**
      * Gets a database connection from the connection pool

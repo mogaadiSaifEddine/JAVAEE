@@ -20,10 +20,9 @@ public class MenuModel {
 
         try {
             conn = DBUtil.getConnection();
-            conn.setAutoCommit(false); // Start transaction manually
+            conn.setAutoCommit(false); // Start transaction
 
             pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows > 0) {
@@ -36,10 +35,11 @@ public class MenuModel {
                     // Add plats to the menu if any
                     boolean platsAdded = true;
                     if (menu.getPlats() != null && !menu.getPlats().isEmpty()) {
+                        // CHANGE: Pass the existing connection to the inner method
                         PlatMenuModel platMenuModel = new PlatMenuModel();
                         for (Plat plat : menu.getPlats()) {
                             PlatMenu platMenu = new PlatMenu(plat.getIdPlat(), menuId, 1);
-                            if (!platMenuModel.addPlatMenu(platMenu)) {
+                            if (!platMenuModel.addPlatMenu(platMenu, conn)) { // Pass the connection
                                 platsAdded = false;
                                 break;
                             }
@@ -47,23 +47,19 @@ public class MenuModel {
                     }
 
                     if (platsAdded) {
-                        conn.commit(); // Commit the transaction
+                        conn.commit();
                         success = true;
                     } else {
-                        conn.rollback(); // Rollback if adding plats failed
+                        conn.rollback();
                     }
                 }
-            }
-
-            if (!success) {
-                conn.rollback(); // Ensure rollback if we didn't succeed
             }
 
             return success;
         } catch (SQLException e) {
             try {
                 if (conn != null) {
-                    conn.rollback(); // Rollback on any exception
+                    conn.rollback();
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -73,7 +69,7 @@ public class MenuModel {
         } finally {
             try {
                 if (conn != null) {
-                    conn.setAutoCommit(true); // Reset auto-commit before closing
+                    conn.setAutoCommit(true);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -81,6 +77,7 @@ public class MenuModel {
             closeResources(null, pstmt, conn);
         }
     }
+
     // Get all menus
     public List<Menu> getAllMenus() {
         String sql = "SELECT * FROM menu";
@@ -236,36 +233,27 @@ public class MenuModel {
     private class PlatMenuModel {
 
         // Add a plat to a menu
-        public boolean addPlatMenu(PlatMenu platMenu) {
-            // Use same connection as parent transaction
+        public boolean addPlatMenu(PlatMenu platMenu, Connection conn) throws SQLException {
             String sql = "INSERT INTO plat_menu (id_plat, id_menu, Qt_plat) VALUES (?, ?, ?)";
-            Connection conn = null;
             PreparedStatement pstmt = null;
+            boolean success = false;
 
             try {
-                // Use an existing connection from the outer class if available
-                conn = DBUtil.getConnection();
+                // Use the passed connection instead of getting a new one
                 pstmt = conn.prepareStatement(sql);
-
                 pstmt.setInt(1, platMenu.getIdPlat());
                 pstmt.setInt(2, platMenu.getIdMenu());
                 pstmt.setInt(3, platMenu.getQtPlat());
 
                 int affectedRows = pstmt.executeUpdate();
-                return affectedRows > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
+                success = affectedRows > 0;
             } finally {
-                // Only close the PreparedStatement, not the connection
-                // as it's managed by the outer method
-                try {
-                    if (pstmt != null) pstmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                // Close only the PreparedStatement, not the connection
+                if (pstmt != null) pstmt.close();
             }
-        }        // Get all plat_menu entries for a specific menu
+
+            return success;
+        }  // Get all plat_menu entries for a specific menu
         public List<PlatMenu> getPlatMenusByMenuId(int menuId) {
             String sql = "SELECT * FROM plat_menu WHERE id_menu = ?";
             List<PlatMenu> platMenuList = new ArrayList<>();
