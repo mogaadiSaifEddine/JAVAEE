@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -9,18 +11,15 @@
     />
     <link
       rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
       href="${pageContext.request.contextPath}/css/style.css"
     />
   </head>
   <body>
-    <div style="background-color: yellow; padding: 10px; margin: 10px">
-      <p>JSP Test: This text should be visible</p>
-      <p>Client list size: ${clientList.size()}</p>
-      <p>
-        Test object: ${not empty clientList ? 'Client list has elements' :
-        'Client list is empty'}
-      </p>
-    </div>
+   
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="${pageContext.request.contextPath}/"
         >Restaurant Management</a
@@ -99,6 +98,14 @@
               </h4>
             </div>
             <div class="card-body">
+              <div style="background-color: lightblue; padding: 10px;">
+                <h3>First client details:</h3>
+                <c:if test="${not empty clientList}">
+                  Client #1 ID: ${clientList[0].idClient}<br>
+                  Client #1 First Name: ${clientList[0].FNameClient}<br>
+                  Client #1 toString: ${clientList[0]}<br>
+                </c:if>
+              </div>
               <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -112,44 +119,39 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <c:forEach var="client" items="${clientList}">
+                  <%
+                    java.util.List clientList = (java.util.List)request.getAttribute("clientList");
+                    if (clientList != null && !clientList.isEmpty()) {
+                      for (int i = 0; i < clientList.size(); i++) {
+                        Object clientObj = clientList.get(i);
+                        if (clientObj != null) {
+                          entities.Client client = (entities.Client)clientObj;
+                  %>
                     <tr>
-                      <td><c:out value="${client.idClient}" /></td>
-                      <td><c:out value="${client.FNameClient}" /></td>
-                      <td><c:out value="${client.LNameClient}" /></td>
-                      <td><c:out value="${client.phoneClient}" /></td>
-                      <td><c:out value="${client.emailClient}" /></td>
-                      <td><c:out value="${client.localisationClient}" /></td>
+                      <td><%= client.getIdClient() %></td>
+                      <td><%= client.getFNameClient() %></td>
+                      <td><%= client.getLNameClient() %></td>
+                      <td><%= client.getPhoneClient() %></td>
+                      <td><%= client.getEmailClient() %></td>
+                      <td><%= client.getLocalisationClient() %></td>
                       <td>
-                        <a
-                          href="${pageContext.request.contextPath}/clients/view?id=<c:out value='${client.idClient}' />"
-                          class="btn btn-info btn-sm"
-                          >View</a
-                        >
-                        <a
-                          href="${pageContext.request.contextPath}/clients/edit?id=<c:out value='${client.idClient}' />"
-                          class="btn btn-primary btn-sm"
-                          >Edit</a
-                        >
-                        <a
-                          href="${pageContext.request.contextPath}/clients/delete?id=<c:out value='${client.idClient}' />"
-                          class="btn btn-danger btn-sm"
-                          onclick="return confirm('Are you sure you want to delete this client?')"
-                          >Delete</a
-                        >
-                        <a
-                          href="${pageContext.request.contextPath}/reservations/client?clientId=<c:out value='${client.idClient}' />"
-                          class="btn btn-success btn-sm"
-                          >Reservations</a
-                        >
-                        <a
-                          href="${pageContext.request.contextPath}/commandes/client?clientId=<c:out value='${client.idClient}' />"
-                          class="btn btn-warning btn-sm"
-                          >Orders</a
-                        >
+                        <a href="${pageContext.request.contextPath}/clients/delete?id=<%= client.getIdClient() %>" class="btn btn-danger btn-sm"
+                          onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
+                        <a href="${pageContext.request.contextPath}/reservations/client?clientId=<%= client.getIdClient() %>" class="btn btn-success btn-sm">Reservations</a>
+                        <a href="${pageContext.request.contextPath}/commandes/client?clientId=<%= client.getIdClient() %>" class="btn btn-warning btn-sm">Orders</a>
                       </td>
                     </tr>
-                  </c:forEach>
+                  <%
+                        }
+                      }
+                    } else {
+                  %>
+                    <tr>
+                      <td colspan="7" class="text-center">No clients found. Please add a client.</td>
+                    </tr>
+                  <%
+                    }
+                  %>
                 </tbody>
               </table>
             </div>

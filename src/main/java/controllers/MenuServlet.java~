@@ -88,7 +88,7 @@ public class MenuServlet extends HttpServlet {
             List<Menu> menuList = menuModel.getAllMenus();
             System.out.println("Retrieved " + menuList.size() + " menus");
             request.setAttribute("menuList", menuList);
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/menusList.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/menuList.jsp");
             dispatcher.forward(request, response);
         } catch (Exception e) {
             System.out.println("Error retrieving menu list");
@@ -100,10 +100,9 @@ public class MenuServlet extends HttpServlet {
     private void showNewForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Get all plats for checkboxes
         List<Plat> platList = platModel.getAllPlats();
-        System.out.println(platList);
         request.setAttribute("platList", platList);
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/addMenu.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/add.jsp");
         dispatcher.forward(request, response);
     }
 

@@ -6,6 +6,16 @@ import java.util.stream.Collectors;
 
 public class Menu {
     private int idMenu;
+
+    public String getNameMenu() {
+        return nameMenu;
+    }
+
+    public void setNameMenu(String nameMenu) {
+        this.nameMenu = nameMenu;
+    }
+
+    private String nameMenu;
     private List<Plat> plats;
 
     // Default constructor

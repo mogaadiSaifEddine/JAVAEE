@@ -13,13 +13,15 @@ public class MenuModel {
 
     // Create a new menu
     public boolean addMenu(Menu menu) {
-        String sql = "INSERT INTO menu () VALUES ()"; // Empty parentheses since there are no columns except the auto-increment ID
+        String sql = "INSERT INTO menu () VALUES ()";
         Connection conn = null;
         PreparedStatement pstmt = null;
+        boolean success = false;
 
         try {
             conn = DBUtil.getConnection();
-            conn.setAutoCommit(false);
+            conn.setAutoCommit(false); // Start transaction manually
+
             pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             int affectedRows = pstmt.executeUpdate();
@@ -32,24 +34,36 @@ public class MenuModel {
                     menu.setIdMenu(menuId);
 
                     // Add plats to the menu if any
+                    boolean platsAdded = true;
                     if (menu.getPlats() != null && !menu.getPlats().isEmpty()) {
                         PlatMenuModel platMenuModel = new PlatMenuModel();
                         for (Plat plat : menu.getPlats()) {
-                            PlatMenu platMenu = new PlatMenu(plat.getIdPlat(), menuId, 1); // Assuming quantity is 1 by default
-                            platMenuModel.addPlatMenu(platMenu);
+                            PlatMenu platMenu = new PlatMenu(plat.getIdPlat(), menuId, 1);
+                            if (!platMenuModel.addPlatMenu(platMenu)) {
+                                platsAdded = false;
+                                break;
+                            }
                         }
                     }
 
-                    conn.commit();
-                    return true;
+                    if (platsAdded) {
+                        conn.commit(); // Commit the transaction
+                        success = true;
+                    } else {
+                        conn.rollback(); // Rollback if adding plats failed
+                    }
                 }
             }
-            conn.rollback();
-            return false;
+
+            if (!success) {
+                conn.rollback(); // Ensure rollback if we didn't succeed
+            }
+
+            return success;
         } catch (SQLException e) {
             try {
                 if (conn != null) {
-                    conn.rollback();
+                    conn.rollback(); // Rollback on any exception
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -59,7 +73,7 @@ public class MenuModel {
         } finally {
             try {
                 if (conn != null) {
-                    conn.setAutoCommit(true);
+                    conn.setAutoCommit(true); // Reset auto-commit before closing
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -67,7 +81,6 @@ public class MenuModel {
             closeResources(null, pstmt, conn);
         }
     }
-
     // Get all menus
     public List<Menu> getAllMenus() {
         String sql = "SELECT * FROM menu";
@@ -224,11 +237,13 @@ public class MenuModel {
 
         // Add a plat to a menu
         public boolean addPlatMenu(PlatMenu platMenu) {
+            // Use same connection as parent transaction
             String sql = "INSERT INTO plat_menu (id_plat, id_menu, Qt_plat) VALUES (?, ?, ?)";
             Connection conn = null;
             PreparedStatement pstmt = null;
 
             try {
+                // Use an existing connection from the outer class if available
                 conn = DBUtil.getConnection();
                 pstmt = conn.prepareStatement(sql);
 
@@ -242,11 +257,15 @@ public class MenuModel {
                 e.printStackTrace();
                 return false;
             } finally {
-                closeResources(null, pstmt, conn);
+                // Only close the PreparedStatement, not the connection
+                // as it's managed by the outer method
+                try {
+                    if (pstmt != null) pstmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-
-        // Get all plat_menu entries for a specific menu
+        }        // Get all plat_menu entries for a specific menu
         public List<PlatMenu> getPlatMenusByMenuId(int menuId) {
             String sql = "SELECT * FROM plat_menu WHERE id_menu = ?";
             List<PlatMenu> platMenuList = new ArrayList<>();

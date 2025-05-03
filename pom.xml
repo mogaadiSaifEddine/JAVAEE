@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1</version>
         </dependency>
 
         <!-- MySQL Connector -->
@@ -159,7 +159,6 @@
                     <webApp>
                         <contextPath>/restaurant</contextPath>
                     </webApp>
-                    <scanIntervalSeconds>2</scanIntervalSeconds>
                 </configuration>
             </plugin>
             <plugin>
